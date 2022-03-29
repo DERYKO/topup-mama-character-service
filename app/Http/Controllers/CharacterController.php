@@ -34,11 +34,12 @@ class CharacterController extends Controller
                     $book_id = $link[count($link) - 1];
                     return $book_id == $request->book_id;
                 });
-                return count($books) > 0;
-            })->toArray();
+                return count($books) > 0 && (!isset($request->gender) || $request->gender == $character->gender);
+            })->{'sortBy'.($request->sort_dir && $request->sort_dir == 'Asc' ? '' : 'Desc' )}()->toArray();
             return response()->json([
                 'message' => 'success fetching characters',
-                'data' => $records
+                'data' => $records,
+                'records_count' => count($records),
             ]);
         } catch (ClientException $e) {
             return response()->json([
